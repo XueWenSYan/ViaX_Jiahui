@@ -1,21 +1,26 @@
 # This script heavily borrows from Dr. Anand Sokhey's ICPSR 2021 course examples.   
 
 rm(list =ls())
-install.packages("igraph")
-install.packages("statnet")
-install.packages("network")
-library(igraph)
+# install.packages("igraph")
+# install.packages("statnet")
+# install.packages("network")
+# install.packages('intergraph')
+library(intergraph)
 library(statnet,quietly = T)
 library(network,quietly = T)
 library(tidyverse)
-
-m_game <- read.csv("C:\\Users\\xwuey\\Desktop\\relation.csv")
+Sys.setlocale("LC_ALL","English")
+m_game <- read.csv("G:/My Drive/12 Mentoring/徐佳慧/ViaX_Jiahui/relation.csv")
 m_game[is.na(m_game)] <- 0
 m_game<- m_game[,-1] %>% as.matrix() 
 net_game <- network(m_game, matrix.type="adjacency");net_game
-network.vertex.names(net_game) <- c("??????", "??????", "?????????", "D", "E")
-gplot(net_game,displaylabels=T)
-
+g_game <- igraph::graph_from_adjacency_matrix(m_game,mode='upper') #calling netmat1 from above
+net_game <- intergraph::asNetwork(g_game,directed = F)
+par(mfrow=c(1,1))
+lay <- gplot.layout.circle(net_game)
+gplot(net_game,displaylabels = T,gmode='graph',edge.col='pink',vertex.col='pink',
+      label.cex=0.7, mode = 'fr',label.pos=20,vertex.border = 'pink')
+plot(g_game)
 #create a network object from an adjacency matrix
 netmat1 <- rbind(c(0,1,1,0,0),
                  c(0,0,1,1,0),
@@ -24,7 +29,8 @@ netmat1 <- rbind(c(0,1,1,0,0),
                  c(0,0,1,0,0))
 rownames(netmat1) <- c("A", "B", "C", "D", "E")
 (colnames(netmat1) <- c("A", "B", "C", "D", "E"));netmat1 
-as.network(netmat1)
+netmat1 <- as.network(netmat1)
+class(netmat1)
 net1 <- network(netmat1, matrix.type="adjacency");net1
 
 gplot(net1, vertex.col = 2, displaylabels = TRUE,vertex.cex = 0.2)
@@ -77,7 +83,7 @@ net.df
 #saving as external csv file
 getwd()
 write.csv(net.df, file = "C:/Users/xwuey/Desktop/MyData.csv")
-setwd("G:/My Drive/ViaX/徐佳慧")
+setwd("G:/My Drive/ViaX/å¾ä½³æ§")
 
 #importing csv file to R
 net.edge <- read.csv(file = "C:/Users/xwuey/Desktop/MyData.csv")
